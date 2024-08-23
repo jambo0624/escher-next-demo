@@ -1,5 +1,6 @@
 'use client';
 import Head from "next/head";
+import React, { useState, useEffect } from 'react';
 import map from "/public/RECON1_FIT_data.json";
 import model from "/public/PPPmodel.json";
 import dynamic from "next/dynamic";
@@ -7,6 +8,22 @@ import dynamic from "next/dynamic";
 const DynamicEscherMap = dynamic(() => import("../components/EscherMap"), {ssr: false});
 
 export default function Home() {
+  const [reactionData, setReactionData] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try{
+        // Fetch data from the Flight_RPC server
+        const res = await fetch('/api/getFlightInfo');
+        const data = await res.json();
+        setReactionData(data);
+      }catch (e) {
+        console.error(e);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -22,7 +39,11 @@ export default function Home() {
           <h2>mock VMH tabs</h2>
           <p>Escher Next is a Next.js app that uses the Escher library to display a metabolic map. This example uses the RECON1_FIT_data.json map and the PPPmodel.json model.</p>
         </div>
-        <DynamicEscherMap map={map} model={model} />
+        {reactionData ? (
+          <DynamicEscherMap map={map} model={model} reactionData={reactionData}/>
+        ) : (
+          <p>Loading...</p>
+        )}
       </div>
     </>
   );

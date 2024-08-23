@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Builder, libs } from 'escher';
 
-const EscherMap = ({ map, model }) => {
+const EscherMap = ({ map, model, reactionData }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       new Builder( // eslint-disable-line no-new
@@ -12,7 +12,9 @@ const EscherMap = ({ map, model }) => {
         {
           fill_screen: true,
           never_ask_before_quit: true,
+          show_reaction_data_animation: true,
           scroll_behavior: 'zoom',
+          reaction_data: reactionData,
         }
       );
     }
