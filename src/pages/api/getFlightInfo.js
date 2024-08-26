@@ -1,11 +1,13 @@
 import net from 'net';
 
 export default (req, res) => {
+  const descriptor = req.query.descriptor || 'All_IDopa'; // Accessing descriptor from query parameters
+
   const client = new net.Socket();
   client.connect(6000, '127.0.0.1', () => {
     client.write(JSON.stringify({
       type: 'flux_data',
-      descriptor: 'All_IDopa'
+      descriptor
     }));
   });
 

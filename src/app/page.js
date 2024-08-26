@@ -9,21 +9,23 @@ const DynamicEscherMap = dynamic(() => import("../components/EscherMap"), {ssr: 
 
 export default function Home() {
   const [reactionData, setReactionData] = useState(null);
+  const [descriptor, setDescriptor] = useState('All_IDopa');
 
-  useEffect(() => {
-    async function fetchData() {
-      try{
-        // Fetch data from the Flight_RPC server
-        const res = await fetch('/api/getFlightInfo');
-        const data = await res.json();
-        setReactionData(data);
-      }catch (e) {
-        console.error(e);
-      }
+  const fetchData = async (descriptor) => {
+    const url = `/api/getFlightInfo?descriptor=${encodeURIComponent(descriptor)}`;
+
+    try{
+      // Fetch data from the Flight_RPC server
+      const res = await fetch(url)
+
+      const data = await res.json();
+      console.log(data, 'data');
+      setReactionData(data);
+    }catch (e) {
+      console.error(e);
     }
+  }
 
-    fetchData();
-  }, []);
 
   return (
     <>
@@ -37,13 +39,43 @@ export default function Home() {
         <h1>VMH</h1>
         <div className="header">
           <h2>mock VMH tabs</h2>
-          <p>Escher Next is a Next.js app that uses the Escher library to display a metabolic map. This example uses the RECON1_FIT_data.json map and the PPPmodel.json model.</p>
+          <div style={{
+            padding: '20px',
+            background: '#f0f0f0',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            maxWidth: '400px',
+            margin: 'auto'
+          }}>
+            <input
+              type="text"
+              value={descriptor}
+              onChange={(e) => {
+                console.log(e.target.value, 'e.target.value');
+                setDescriptor(e.target.value);
+              }}
+              style={{padding: '10px', width: '70%', borderRadius: '4px', border: '1px solid #ccc'}}
+            />
+            <button
+              onClick={() => fetchData(descriptor)}
+              style={{
+                padding: '10px 20px',
+                borderRadius: '4px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              Fetch Data
+            </button>
+          </div>
+          <p>Escher Next is a Next.js app that uses the Escher library to display a metabolic map. This example uses the
+            RECON1_FIT_data.json map and the PPPmodel.json model.</p>
         </div>
-        {reactionData ? (
-          <DynamicEscherMap map={map} model={model} reactionData={reactionData}/>
-        ) : (
-          <p>Loading...</p>
-        )}
+        <DynamicEscherMap map={map} model={model} reactionData={reactionData}/>
       </div>
     </>
   );

@@ -4,6 +4,7 @@ import { Builder, libs } from 'escher';
 const EscherMap = ({ map, model, reactionData }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      libs.d3_select('#root').node().innerHTML = '';
       new Builder( // eslint-disable-line no-new
         map,
         model,
@@ -18,8 +19,7 @@ const EscherMap = ({ map, model, reactionData }) => {
         }
       );
     }
-  }, [map, model]);
-
+  }, [map, model, reactionData]);
   return <div id="root" style={{
     position: "absolute",
     top: "auto",
